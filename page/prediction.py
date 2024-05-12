@@ -132,7 +132,7 @@ def prediction():
     if country == 'World':
         country = None
     # country = st.selectbox('Country', df['Country/Region'].unique())
-    model = st.selectbox('Model', ['Linear Regression', 'SVR','prophet'])
+    model = st.selectbox('Model', ['prophet','Linear Regression', 'SVR'])
     if st.button('Predict'):
         confirmed_forecast, deaths_forecast, recovered_forecast = make_prediction(start_date, end_date, country, model)
         st.write('Confirmed Cases:')
