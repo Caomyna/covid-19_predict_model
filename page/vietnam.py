@@ -35,12 +35,6 @@ def create_pie_chart(df, labels, title):
     ax.pie(df, labels=labels, startangle=90)
     st.pyplot(fig)
 
-
-# Calculate total cases and active cases
-# df['Total cases'] = df['Total Confirmed Cases (Viet Nam National)'] + df['Total Confirmed Cases (Foreign National)']
-# df['Total Active'] = df['Total cases'] - (df['Deaths'] + df['Recovered'])
-
-
 # Create map
 def show_province_distribution(df,Vietnam_coord):
     st.markdown('<h4>Province Distribution</h4>', unsafe_allow_html=True)
@@ -58,40 +52,6 @@ def show_province_distribution(df,Vietnam_coord):
     map_html = map._repr_html_()
     st.components.v1.html(map_html, width=800, height=600)
     
-    
-# Tập dữ liệu cũ 
-def Confirmed_Recovered_figures(df):
-    st.markdown('<h4>Confirmed vs Recovered figures</h4>', unsafe_allow_html=True)
-    data = df[['Province', 'Total cases', 'Recovered', 'Deaths']]
-    data.sort_values('Total cases', ascending=False, inplace=True)
-    f, ax = plt.subplots(figsize=(12, 15))
-    #vẽ hai biểu đồ cột
-    sns.set_color_codes("pastel")
-    sns.barplot(x="Total cases", y="Province", data=data, label="Total", color="r")
-    sns.set_color_codes("muted")
-    sns.barplot(x="Recovered", y="Province", data=data, label="Recovered", color="g")
-    ax.legend(ncol=2, loc="lower right", frameon=True)
-    ax.set(xlim=(0, 250), ylabel="", xlabel="Cases")
-    sns.despine(left=True, bottom=True)
-    st.pyplot(f)
-    
-    
-# Number of foregin nationals infected in Vietnam
-def foregin_national_cases(df):
-    st.markdown('<h4>Number of foregin nationals infected in Vietnam</h4>', unsafe_allow_html=True)
-    vn_national = df['Total Confirmed Cases (Viet Nam National)'].sum()
-    foregin_national = df['Total Confirmed Cases (Foreign National)'].sum()
-    df1 = [vn_national, foregin_national]
-    labels = ['Vietnamese nationality','Foreign Nationals']
-    fig, ax = plt.subplots(figsize = (8,8))
-    # ax.pie(df1, labels=labels, startangle=90)
-    wedges, _ , autotexts = ax.pie(df1, labels=labels, startangle=90, autopct='%1.1f%%', textprops=dict(color="w"))
-    plt.setp(autotexts, size=10, weight="bold")
-    ax.axis('equal') 
-    # Add custom legend for each wedge
-    for i, autotext in enumerate(autotexts):
-        autotext.set_text(f'{labels[i]}: {df1[i]}')
-    st.pyplot(fig)
 
 # Display about information
 def about():
@@ -100,7 +60,7 @@ def about():
     st.write('Please note that this application is not meant for providing real-time data and might not reflect the most recent situation in Vietnam. For the latest and most accurate information, please refer to reliable sources such as the World Health Organization (WHO), Vietnam\'s Ministry of Health, or local government agencies.')
 
 # Tổng ca nhiễm theo tỉnh
-def plot_bar_chart(df):
+def total_cases_by_province(df):
     df.sort_values(['Total cases'], ascending = False, inplace = True)
     fig = px.bar(df, x='Province', y='Total cases', title='Tổng ca nhiễm theo tỉnh')
     st.plotly_chart(fig)
@@ -109,7 +69,7 @@ def plot_bar_chart(df):
          "<span style='color: blue; font-weight: bold;'>Hanoi with more than 1,646,000 cases</span>. Both cities recorded a significant number of infections.")
     
 # Số ca nhiễm mới của mỗi tỉnh
-def plot_line_chart(df):
+def new_cases(df):
     fig = px.line(df, x='Province', y='New Cases', title='Số ca nhiễm mới của mỗi tỉnh')
     st.plotly_chart(fig)
     st.write("Number of new infections: From the data in the chart above, it shows that there is still an increase in the number of new cases although not all provinces/cities have recorded new cases recently. "
@@ -119,7 +79,7 @@ def plot_line_chart(df):
          "However, there are also some provinces/cities that did not record new infections during this time.", unsafe_allow_html=True)
 
 # Tỉ lệ số ca tử vong theo tỉnh
-def plot_pie_chart(df):
+def mortality_rate(df):
     df['Mortality Rate'] = (df['Death'] / df['Total cases']) * 100
     df_rate = df[(df['Total cases'] > 0) & (df['Death'] > 0)]
     fig_mortality_rate = px.pie(df_rate, values='Death', names='Province', title='Tỷ lệ tử vong theo tỉnh', labels={'Province': 'Province', 'Death': 'Number of Deaths'})
@@ -143,16 +103,16 @@ def vietnam():
     st.title('Analyzing the COVID-19 in Vietnam')
     
     # Display dataset
-    display_dataset(df)
+    display_dataset(df_full)
     
     # Calculate total number of confirmed cases
     total_cases = df['Total cases'].sum()
     st.write('Total number of confirmed COVID 19 cases across Vietnam till date (April 12, 2024):',total_cases)
     
      # Hiển thị các biểu đồ
-    plot_bar_chart(df_full)
-    plot_line_chart(df_full)
-    plot_pie_chart(df_full)
+    total_cases_by_province(df_full)
+    new_cases(df_full)
+    mortality_rate(df_full)
     plot_heatmap(df_full)
     
     st.write("Based on the above data analysis, it can be seen that Vietnam is continuing to face challenges from the COVID-19 epidemic. The government has imposed restrictions and control measures to reduce the spread of the virus. However, the continued increase in cases and deaths requires continued focus and efforts on the part of governments and communities.")
@@ -162,19 +122,43 @@ def vietnam():
     
     about()
 
-    # Calculate total number of active cases
-    # total_active = df['Total Active'].sum()
-    # st.write('Total number of active COVID 2019 cases across Vietnam: ', total_active)
 
-    # Create bar chart for top 10 provinces with highest number of active cases
-    # tot_cases = df.groupby('Province')['Total Active'].sum().sort_values(ascending=False).to_frame()
-    # top10_cases = tot_cases.head(10)
-    # create_bar_chart(top10_cases, 'Total Active', top10_cases.index, 'Top 10 Provinces with the Highest Number of Active COVID-19 Cases', 'Total Active Cases', 'Province')
+
+# Tập dữ liệu cũ 
+# Calculate total cases and active cases
+# df['Total cases'] = df['Total Confirmed Cases (Viet Nam National)'] + df['Total Confirmed Cases (Foreign National)']
+# df['Total Active'] = df['Total cases'] - (df['Deaths'] + df['Recovered'])
+
+# def Confirmed_Recovered_figures(df):
+#     st.markdown('<h4>Confirmed vs Recovered figures</h4>', unsafe_allow_html=True)
+#     data = df[['Province', 'Total cases', 'Recovered', 'Deaths']]
+#     data.sort_values('Total cases', ascending=False, inplace=True)
+#     f, ax = plt.subplots(figsize=(12, 15))
+#     #vẽ hai biểu đồ cột
+#     sns.set_color_codes("pastel")
+#     sns.barplot(x="Total cases", y="Province", data=data, label="Total", color="r")
+#     sns.set_color_codes("muted")
+#     sns.barplot(x="Recovered", y="Province", data=data, label="Recovered", color="g")
+#     ax.legend(ncol=2, loc="lower right", frameon=True)
+#     ax.set(xlim=(0, 250), ylabel="", xlabel="Cases")
+#     sns.despine(left=True, bottom=True)
+#     st.pyplot(f)
     
     
-    
-    # Confirmed_Recovered_figures()
-
-    # foregin_national_cases(df)
-
+# # Number of foregin nationals infected in Vietnam
+# def foregin_national_cases(df):
+#     st.markdown('<h4>Number of foregin nationals infected in Vietnam</h4>', unsafe_allow_html=True)
+#     vn_national = df['Total Confirmed Cases (Viet Nam National)'].sum()
+#     foregin_national = df['Total Confirmed Cases (Foreign National)'].sum()
+#     df1 = [vn_national, foregin_national]
+#     labels = ['Vietnamese nationality','Foreign Nationals']
+#     fig, ax = plt.subplots(figsize = (8,8))
+#     # ax.pie(df1, labels=labels, startangle=90)
+#     wedges, _ , autotexts = ax.pie(df1, labels=labels, startangle=90, autopct='%1.1f%%', textprops=dict(color="w"))
+#     plt.setp(autotexts, size=10, weight="bold")
+#     ax.axis('equal') 
+#     # Add custom legend for each wedge
+#     for i, autotext in enumerate(autotexts):
+#         autotext.set_text(f'{labels[i]}: {df1[i]}')
+#     st.pyplot(fig)
 

@@ -3,13 +3,8 @@ import pandas as pd
 from prophet import Prophet
 
 # Load the preprocessed data
-df = pd.read_csv('../../covid_19/data_world/covid_19_clean_complete.csv')
-
-# start_date = ''
-# end_date = ''
-# future = pd.DataFrame({'ds': pd.date_range(start=start_date, end=end_date)})
-# Tạo dataframe cho các ngày bạn muốn dự đoán
-# future = m_confirmed.make_future_dataframe(periods=365) 
+df = pd.read_csv('../../covid_19/data_world/covid_19_clean_complete_1.csv')
+df['Date'] = pd.to_datetime(df['Date'])
 
 # Create a Prophet model for confirmed cases
 confirmed = df.groupby('Date').sum()['Confirmed'].reset_index()

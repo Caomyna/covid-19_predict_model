@@ -4,44 +4,24 @@ from page.home import home
 from page.vietnam import vietnam
 from page.world import world
 from page.prediction import prediction
+from page.predict import predict
 
 # Điều hướng trang
 def main():
     with st.sidebar:
         choice = option_menu(
             menu_title = "Main Menu",
-            options=["🏠 Trang chủ", '📈 Phân tích COVID-19 Việt Nam', '🌎 Phân tích COVID-19 Thế giới', '📊 Dự đoán'],
+            options=["🏠 Home", '📈 Analysing the present COVID-19 in Vietnam', '🌎 COVID-19 Worldwide', '📊 Prediction Model'],
         )
 
-    if choice == '🏠 Trang chủ':
+    if choice == '🏠 Home':
         home()
-    elif choice == '📈 Phân tích COVID-19 Việt Nam':
+    elif choice == '📈 Analysing the present COVID-19 in Vietnam':
         vietnam()
-    elif choice == '🌎 Phân tích COVID-19 Thế giới':
+    elif choice == '🌎 COVID-19 Worldwide':
         world()
-    elif choice == '📊 Dự đoán':
-        prediction()
-# Điều hướng trang
-# def main():
-#     st.sidebar.title('Menu')
-#     st.sidebar.divider()
-#     # Tạo menu điều hướng trang
-#     menu = [
-#         '🏠Trang chủ', 
-#         '📈Phân tích COVID-19 Việt Nam', 
-#         '🌎Phân tích COVID-19 Thế giới', 
-#         '📊Dự đoán'
-#     ]
-#     choice = st.sidebar.radio('', menu)
-
-#     if choice == '🏠Trang chủ':
-#         home()
-#     elif choice == '📈Phân tích COVID-19 Việt Nam':
-#         vietnam()
-#     elif choice == '🌎Phân tích COVID-19 Thế giới':
-#         world()
-#     elif choice == '📊Dự đoán':
-#         prediction()
+    elif choice == '📊 Prediction Model':
+        predict()
 
 if __name__ == '__main__':
     main()

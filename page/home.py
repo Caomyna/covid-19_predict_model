@@ -2,13 +2,6 @@ import json
 import streamlit as st
 import pandas as pd
 from streamlit_lottie import st_lottie
-# ➢ st.set_page_config(
-    # page_title=None, 
-    # page_icon=None, 
-    # layout="centered",
-    #initial_sidebar_state="auto", 
-    # menu_items=None
-#)
 
 def load_lottiefile(filepath: str):
     with open(filepath, "r") as f:
